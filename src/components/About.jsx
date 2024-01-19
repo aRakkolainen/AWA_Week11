@@ -1,11 +1,35 @@
+import {useEffect, useState} from "react";
 
-
-const About = function() {
+const About = function() { 
+    const [list, setList] = useState([]);
+    useEffect(() => {
+        let mounted = true; 
+        async function doStuff(){
+            const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+            const data = await response.json(); 
+            if (mounted) {
+                let items = [];
+                for (let i=0; i < data.length; i++) {
+                    let newItem = {id: data[i].id, title: data[i].title}
+                    items.push(newItem);
+                }
+                console.log(items)
+                setList(items.map((item) => {
+                    return <li key={item.id}>{item.title}</li>
+                    
+                }))
+                
+            }
+        }
+        doStuff();
+        return () => {
+            mounted=false;
+        }
+    }, []);
 
     return <>
         <div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam molestias, corrupti illo maxime quam, modi odio dolore nulla totam porro cum similique reiciendis. Quasi nulla voluptatem laborum. Dicta, exercitationem nesciunt?
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Natus hic aperiam, voluptatem dolores asperiores perspiciatis architecto id mollitia voluptatibus eveniet ullam temporibus ipsa, dicta incidunt facere esse consequatur numquam velit.
+            <ul>{list}</ul>
         </div>
     </>
 } 
